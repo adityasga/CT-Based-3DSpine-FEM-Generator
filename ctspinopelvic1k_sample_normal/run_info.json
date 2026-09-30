@@ -1,0 +1,30 @@
+{
+  "repo": "OpenSpineConsortium/CTSpinoPelvic1K",
+  "revision": "main",
+  "sample_size": 10,
+  "seed": 20260911,
+  "required_config": "fused",
+  "metadata_exclusions": [
+    "lstv_class != 0",
+    "has_l6",
+    "lstv_confusion_zone",
+    "castellvi_type",
+    "lstv_phenotype",
+    "hardware_labelled"
+  ],
+  "voxel_exclusions": {
+    "25": "vertebra_L6_LSTV",
+    "28": "vertebra_T13",
+    "46": "rib_left_13",
+    "59": "rib_right_13",
+    "60": "rib_left_lumbar",
+    "61": "rib_right_lumbar",
+    "62": "hardware_unspecified",
+    "63": "hardware_cage",
+    "64": "hardware_screw_rod",
+    "65": "hardware_plate",
+    "66": "hardware_arthroplasty",
+    "67": "hardware_si_screw",
+    "68": "hardware_osteosynthesis"
+  }
+}
