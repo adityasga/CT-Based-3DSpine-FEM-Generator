@@ -1,0 +1,18 @@
+# Local mesh pipeline (run_pipeline.py) - the project venv (Python 3.14). Segmentation models need
+# a second, separate environment: see requirements-torch.txt.
+huggingface_hub
+nibabel
+numpy
+scipy
+scikit-image
+trimesh
+vtk
+pyvista
+pymeshlab
+pymeshfix
+gmsh
+pandas
+matplotlib
+
+# Optional, for the interactive slice slider in label_and_cleaning_viewer.ipynb:
+#   pip install ipywidgets

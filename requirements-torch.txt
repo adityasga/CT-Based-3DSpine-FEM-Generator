@@ -1,0 +1,22 @@
+# PyTorch segmentation models (torch_segment.py) - a separate env, because PyTorch has no
+# Python 3.14 build yet (what requirements.txt / the project venv uses). Create it with:
+#   conda create -y -n seg_torch python=3.11
+#   conda activate seg_torch && pip install -r requirements-torch.txt
+#
+# On an Intel Mac, pin the one release that still ships Intel wheels instead of the line below:
+#   pip install "torch==2.2.2" "numpy<2" -r requirements-torch.txt
+# On Colab the notebook installs what it needs; do not install this file there.
+torch
+numpy<2
+monai==1.4.0          # version pinned by the NV-Segment-CT / -CTMR bundles
+pytorch-ignite
+einops
+fire
+nibabel
+huggingface_hub
+scikit-image
+requests               # vista3d_nim backend (NVIDIA's hosted API)
+TotalSegmentator
+
+# Optional, only for the vbsegm2step backend (~5 GB of weights, pulls in nnU-Net v2 + SimpleITK):
+#   pip install git+https://github.com/fohofmann/vbsegm2step.git

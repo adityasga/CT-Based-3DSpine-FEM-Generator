@@ -48,7 +48,7 @@ def main():
         return p
 
     p = common(sub.add_parser("select",help="choose cases and download their labels"))
-    p.add_argument("--dataset", default=DEFAULT_DATASET, choices = DATASETS)
+    p.add_argument("--dataset", default=DEFAULT_DATASET, choices = DATASETS, help="choose between ctspinopelvic1k, verse2020 or totalseg_v3")
     p.add_argument("--n",type=int, default=1)
     p.add_argument("--seed", type=int, default=2026911)
     p.add_argument("--revision", default = 'main', help ="dataset commit hash to pin the release")
