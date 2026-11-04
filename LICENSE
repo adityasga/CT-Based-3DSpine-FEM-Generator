@@ -1,0 +1,58 @@
+Research & Non-Commercial Use License
+
+Copyright (c) 2026 Aditya Mithani. All rights reserved.
+
+This repository's code (the "Software") is made available under the following terms.
+
+## 1. Research and academic use
+
+Permission is granted, free of charge, to any person to use, copy, modify, and distribute the
+Software for non-commercial research or academic purposes, subject to the following conditions:
+
+  a. Notify the author. Before using the Software (or a modified version of it), let the author
+     know by email at mcgillspacemed@gmail.com, with a brief description of your intended use.
+     A short email is enough. This is so the author knows the work is being built on, not a
+     request you need to wait on approval for.
+
+  b. Cite the work. Any publication, report, thesis, preprint, dataset, or other published work
+     that uses the Software, or results produced with it, must cite it. See "How to cite" below.
+
+  c. Keep this notice. The copyright notice above and this license must be included in all
+     copies or substantial portions of the Software, including modified versions.
+
+## 2. Commercial use requires separate permission
+
+Commercial use of the Software is **not** granted by this license. "Commercial use" means using
+the Software, or models, data, or results produced with it, in connection with a product,
+service, or activity that is sold, licensed, offered for a fee, or otherwise intended for
+commercial advantage or monetary compensation, whether by you, your employer, or a third party.
+
+To use the Software commercially, contact the author first, at mcgillspacemed@gmail.com, to
+request written permission. Terms are negotiated separately on a case-by-case basis and are not
+granted by this license.
+
+## 3. No warranty
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+## 4. Third-party data and models
+
+This license covers the code in this repository only. It does not cover, and grants no rights to,
+the CT datasets or model weights the code downloads: CTSpinoPelvic1K, VerSe 2020, the
+TotalSegmentator dataset v3, NV-Segment-CT / NV-Segment-CTMR, VBSegm2Step, or NVIDIA's hosted
+VISTA-3D API. Each keeps its own license, and several of those are themselves non-commercial or
+research-only. Check each one. See README.md and docs/PIPELINE_REFERENCE.md before any use.
+
+## How to cite
+
+See CITATION.cff, or cite as:
+
+> Mithani, A. (2026). *CT Spine & Pelvis → 3D Bone Mesh Pipeline* [Computer software].
+> https://github.com/<your-username>/<your-repo>
+
+---
+Questions about use, or a request for commercial permission: mcgillspacemed@gmail.com

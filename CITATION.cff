@@ -1,0 +1,31 @@
+# Citation metadata for this repository (https://citation-file-format.github.io/).
+# GitHub reads this file to show a "Cite this repository" button on the repo page.
+#
+# TODO once this is pushed to GitHub: fill in `url` and `repository-code` below with the
+# real repo URL, and update `date-released` / `version` on each citable release.
+cff-version: 1.2.0
+message: >-
+  If you use this software, please cite it as below, and see LICENSE for the
+  notification and citation terms this software is released under.
+type: software
+title: "CT Spine & Pelvis → 3D Bone Mesh Pipeline"
+authors:
+  - family-names: Mithani
+    given-names: Aditya
+    email: mcgillspacemed@gmail.com
+date-released: "2026-11-03"
+url: "https://github.com/<your-username>/<your-repo>"
+repository-code: "https://github.com/<your-username>/<your-repo>"
+abstract: >-
+  Segments spine and pelvis CT scans from open datasets (CTSpinoPelvic1K, VerSe 2020,
+  TotalSegmentator dataset v3), compares automatic segmentation methods against each
+  dataset's own published labels, and cleans every segmented bone into a watertight,
+  quality-checked finite-element mesh, including a two-material (cortical/trabecular)
+  mesh as groundwork for CT-density-derived bone material properties.
+keywords:
+  - medical imaging
+  - CT segmentation
+  - finite element mesh
+  - spine
+  - pelvis
+  - biomechanics
