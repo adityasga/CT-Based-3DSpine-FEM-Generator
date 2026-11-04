@@ -103,7 +103,7 @@ pass `--overwrite`, so you can stop, add a case, or try a new method without red
 ## Installation
 
 ```bash
-git clone <this-repo-url>
+git clone https://github.com/adityasga/Spine_Model_Segmentation_Pipeline
 cd open_spine_data
 ```
 
