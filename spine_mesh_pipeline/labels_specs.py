@@ -79,7 +79,7 @@ def structure_class(name):
 
 def default_torch_python():
     candidates = [os.environ.get("SEG_TORCH_PYTHON", "")] + [
-        str(Path.home() / base / "envs" / "seg_torch" / "bin" / "python")
+        str(Path.home() / base / "envs" / env / "bin" / "python")
         for env in ("seg_torch","spine-nav")
         for base in ("opt/anaconda3", "anaconda3", "miniconda3", "opt/miniconda3", "miniforge3")
     ]

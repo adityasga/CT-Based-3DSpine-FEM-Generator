@@ -1,8 +1,13 @@
 # CT Spine & Pelvis → 3D Bone Mesh Pipeline
 
-![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)
+![License: Research & Non-Commercial Use Only](https://img.shields.io/badge/license-research%20%26%20non--commercial-lightgrey.svg)
 ![Python 3.11–3.14](https://img.shields.io/badge/python-3.11%E2%80%933.14-blue.svg)
 ![Status: active development](https://img.shields.io/badge/status-active%20development-orange.svg)
+
+> **License, in short (see [`LICENSE`](LICENSE) for the full terms):** free to use for research and
+> academic work — please let the author know you're using it (a24mitha@uwaterloo.ca) and cite it
+> ([`CITATION.cff`](CITATION.cff)) in anything you publish. **Commercial use is not permitted without
+> the author's prior written approval** — contact the same address first.
 
 Turns open, public CT scans of the spine and pelvis into **clean, watertight, finite-element-ready 3D
 bone meshes** — and lets you compare several automatic segmentation methods against each other, and
@@ -146,8 +151,9 @@ source venv/bin/activate
 # 1. Pick 5 "normal" cases from the default dataset (CTSpinoPelvic1K) and download their labels
 python run_pipeline.py select --out my_first_run --n 5
 
-# 2. Segment them (runs totalsegmentator in the seg_torch environment, found automatically)
-python run_pipeline.py segment --out my_first_run --method totalsegmentator
+# 2. Segment them (runs totalsegmentator in the seg_torch environment, found automatically).
+#    To run several models in one go, list them: --methods nvsegment totalsegmentator vbsegm2step
+python run_pipeline.py segment --out my_first_run --methods totalsegmentator
 
 # 3. Clean every bone into a watertight, quality-checked mesh, for both the dataset's labels
 #    and TotalSegmentator's
@@ -191,7 +197,6 @@ threshold, and the complete output file schema — is in
 | `totalsegmentator` | local GPU/CPU, or Colab | Easiest to start with: fast, no API key, CC-BY-licensed |
 | `nvsegment` | local GPU/CPU, or Colab | NVIDIA NV-Segment-CTMR; **non-commercial** weight license |
 | `nvsegment_ct` | local GPU/CPU | NV-Segment-CT, the CT-only sibling model |
-| `vista3d_nim` | NVIDIA's cloud (no local GPU needed) | Needs a free API key in `NVIDIA_API_KEY` |
 | `vbsegm2step` | local GPU/CPU | Vertebral bodies only (no posterior arch, no hips); ~5 GB of weights |
 | *your own* | anywhere | `run_pipeline.py import --method <name> --source <folder-or-zip>` |
 
@@ -271,9 +276,6 @@ Issues that came up most often while building and running this on real machines:
 - **`segment` says "retrying on CPU" with an MPS / float64 error.** Expected on Apple Silicon for some
   preprocessing ops; it is handled automatically (the case finishes on CPU, a few seconds slower to
   start). Check `segmentation_log.csv`'s `device` column — `cpu (mps failed)` means this happened.
-- **Nothing happens when you type `export NVIDIA_API_KEY=...`.** `export` only applies to the terminal
-  tab you typed it in; run `segment --method vista3d_nim` in that same tab, or add the line to your
-  shell profile.
 - **`evaluate` gives identical numbers for two different methods.** `evaluate` now checks for this and
   prints a warning (and flags it in `report.html`) when two methods' label maps are byte-identical, or
   when a mesh was built from an older/different label map than the one currently on disk. Re-run `mesh
@@ -313,12 +315,24 @@ A few things worth checking before drawing conclusions from a run (full detail i
 
 ## Citing this work
 
-If you use this pipeline, please also cite the datasets and models you used — see
+Research use of this pipeline requires citing it (see [`LICENSE`](LICENSE)). Cite it as given in
+[`CITATION.cff`](CITATION.cff) (GitHub renders a ready-to-copy citation from this file once the repo is
+pushed), or:
+
+> Mithani, A. (2026). *CT Spine & Pelvis → 3D Bone Mesh Pipeline* [Computer software].
+
+Please also cite the datasets and models you used — see
 [`docs/PIPELINE_REFERENCE.md`](docs/PIPELINE_REFERENCE.md#datasets-select---dataset) for the exact
 citations CTSpinoPelvic1K, VerSe 2020, TotalSegmentator, NV-Segment, and VBSegm2Step each ask for.
 
 ## License
 
-The code in this repository is [MIT-licensed](LICENSE). The datasets and model weights it downloads
-keep their own licenses — several are non-commercial — see [`LICENSE`](LICENSE) and
-[`docs/PIPELINE_REFERENCE.md`](docs/PIPELINE_REFERENCE.md) before any commercial use.
+This code is released for **research and academic use only**: free to use, modify, and share for
+non-commercial research, provided you let the author know
+([mcgillspacemed@gmail.com](mailto:mcgillspacemed@gmail.com)) and cite the work in anything you
+publish. **Commercial use is not permitted** without the author's prior written approval — contact
+the same address to request it. Full terms: [`LICENSE`](LICENSE).
+
+The datasets and model weights the code downloads keep their own, separate licenses — several are
+themselves non-commercial or research-only — see [`LICENSE`](LICENSE) and
+[`docs/PIPELINE_REFERENCE.md`](docs/PIPELINE_REFERENCE.md) before any use, commercial or otherwise.

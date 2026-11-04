@@ -15,6 +15,10 @@ Typical run (ground truth + NV-Segment from Colab + TotalSegmentator):
   python run_pipeline.py mesh     --out ctspinopelvic1k_100_normal --methods ground_truth nvsegment totalsegmentator
   python run_pipeline.py evaluate --out ctspinopelvic1k_100_normal --methods ground_truth nvsegment totalsegmentator
 
+Several datasets in one command (segment, mesh, evaluate, biphasic, zip): list the folders, or use `all`:
+  python run_pipeline.py segment  --out ctspinopelvic_normal totalsegmentator verse2020 --methods nvsegment vbsegm2step
+  python run_pipeline.py mesh     --out all --methods ground_truth nvsegment vbsegm2step
+
 Outputs:
   segmentations/<method>/<volume_id>_label.nii.gz
   meshes/<method>/<NNN_volume_id>/individual_stl/<structure>.stl, spine_combined.stl, pelvis_combined.stl
@@ -22,7 +26,7 @@ Outputs:
 """
 
 import argparse
-from cmd_functions import cmd_select, cmd_segment, cmd_import, cmd_zip, cmd_mesh, cmd_evaluate, cmd_biphasic
+from cmd_functions import cmd_select, cmd_segment, cmd_import, cmd_zip, cmd_mesh, cmd_evaluate, cmd_biphasic, run_on_folders
 from spine_mesh_pipeline.mesh_quality import Thresholds
 from spine_mesh_pipeline.labels_specs import default_torch_python, GROUND_TRUTH, Torch_Models, DEFAULT_DATASET, DATASETS
 
@@ -41,13 +45,17 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     sub = parser.add_subparsers(dest='command',required = True)
 
-    def common(p):
-        p.add_argument('--out',default="ctspinopelvic_normal",help="project folder")
+    def common(p, many_folders=True):
+        if many_folders:
+            p.add_argument('--out', nargs="+", default=["ctspinopelvic_normal"],
+                           help="one or more project folders, or `all` for every folder with a selected_manifest.csv")
+        else:
+            p.add_argument('--out', default="ctspinopelvic_normal", help="project folder")
         p.add_argument("--cases", nargs="*", help ="only these volume_ids (or 3-digit sample indices)")
         p.add_argument("--limit", default = 500, type=int,help="only the first N selected cases")
         return p
 
-    p = common(sub.add_parser("select",help="choose cases and download their labels"))
+    p = common(sub.add_parser("select",help="choose cases and download their labels"), many_folders=False)
     p.add_argument("--dataset", default=DEFAULT_DATASET, choices = DATASETS, help="choose between ctspinopelvic1k, verse2020 or totalseg_v3")
     p.add_argument("--n",type=int, default=1)
     p.add_argument("--seed", type=int, default=2026911)
@@ -60,7 +68,7 @@ def main():
     p.set_defaults(func = cmd_select)
 
     p = common(sub.add_parser("segment", help="run a Pytorch segmentation model locally"))#need to run this on non-Mac platform
-    p.add_argument("--method", required = True, choices = sorted (Torch_Models))
+    p.add_argument("--methods","--method", dest="methods", nargs="+", required = True, choices = sorted (Torch_Models), help="one or more models; each writes to segmentations/<method>/")
     p.add_argument("--torch-python", default = default_torch_python(),help="python of the env with torch (default: seg_torch conda env")
     p.add_argument("--device", default = "auto", choices = ["auto", "cpu", "cuda","mps"])
     p.add_argument("--fast", action = "store_true", help = "TotalSegmentator 3mm model")
@@ -75,7 +83,7 @@ def main():
     p.add_argument("--archive", help="output .zip (default <out>/segmentations/label_maps.zip)")
     p.set_defaults(func=cmd_zip)
 
-    p = common(sub.add_parser("import", help="import label maps (folder or zip) for an approach"))
+    p = common(sub.add_parser("import", help="import label maps (folder or zip) for an approach"), many_folders=False)
     p.add_argument("--method", required=True, help="approach name, e.g. nvsegment, totalsegmentator, my_algo")
     p.add_argument("--source", required=True, help="folder or .zip containing <volume_id>_label.nii.gz")
     p.set_defaults(func=cmd_import)
@@ -117,7 +125,10 @@ def main():
 
 
     args=parser.parse_args()
-    args.func(args)
+    if isinstance(args.out, list):
+        run_on_folders(args)
+    else:
+        args.func(args)
 
 if __name__ == "__main__":
     main()

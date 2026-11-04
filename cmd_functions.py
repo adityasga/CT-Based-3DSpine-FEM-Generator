@@ -1,9 +1,10 @@
 from pathlib import Path
 import json
+import subprocess
 from spine_mesh_pipeline.case_extractor import load_cases, select_cases, manifest_dataset
 from spine_mesh_pipeline import verse, totalseg
 from spine_mesh_pipeline.segmentators import run_torch_model, import_label_maps, zip_label_maps
-from spine_mesh_pipeline.find_directory import source_dir, mesh_dir, label_path
+from spine_mesh_pipeline.find_directory import source_dir, mesh_dir, label_path, segmentation_dir
 from spine_mesh_pipeline.labels_specs import ROWS_FILE, DEFAULT_DATASET, GROUND_TRUTH_VB, REFERENCES
 from spine_mesh_pipeline.data_fetcher import fetch, fetch_ground_truth
 from spine_mesh_pipeline.meshing import MeshParams
@@ -11,6 +12,40 @@ from spine_mesh_pipeline.report import build_reports
 from spine_mesh_pipeline.mesh_quality import Thresholds
 from spine_mesh_pipeline.mesh_pipeline import mesh_all, accuracy_all, check_inputs
 from spine_mesh_pipeline.biphasic import BiphasicParams, biphasic_all
+
+def project_folders(requested):
+    """Expand --out: `all` means every folder here that holds a selection (selected_manifest.csv)."""
+    folders = []
+    for name in requested:
+        folders += sorted(str(p.parent) for p in Path(".").glob("*/selected_manifest.csv")) if name == "all" else [name]
+    folders = list(dict.fromkeys(folders))
+    if not folders:
+        raise SystemExit("--out all found no folder with a selected_manifest.csv; run `select` first.")
+    return folders
+
+def run_on_folders(args):
+    """Run the chosen stage on each --out folder in turn; a failure in one folder does not stop the others."""
+    folders = project_folders(args.out)
+    if len(folders) == 1:
+        args.out = folders[0]
+        return args.func(args)
+    problems = {}
+    for index, folder in enumerate(folders, 1):
+        print(f"\n##### [{index}/{len(folders)}] {folder} #####", flush=True)
+        args.out = folder
+        try:
+            args.func(args)
+        except SystemExit as exc:
+            problems[folder] = str(exc.code)
+        except Exception as exc:
+            problems[folder] = f"{type(exc).__name__}: {exc}"
+        if folder in problems:
+            print(f"{folder}: {problems[folder]}; moving on", flush=True)
+    print("\nAll folders:")
+    for folder in folders:
+        print(f"  {folder}: {problems.get(folder, 'ok')}")
+    if problems:
+        raise SystemExit(f"{len(problems)}/{len(folders)} folders had problems; see above.")
 
 def pick_cases(args):
     cases = load_cases(args.out)
@@ -46,8 +81,26 @@ def cmd_select(args):
     print(f"{len(cases)} cases ready in {args.out}")
 
 def cmd_segment(args):
-    run_torch_model(args.out, args.method, pick_cases(args), args.torch_python, args.revision,
+    cases = pick_cases(args)
+    methods = list(dict.fromkeys(args.methods))
+    crashed = set()
+    for index, method in enumerate(methods):
+        print(f"=== [{index}/{len(methods)}] {method} ===", flush=True)
+        try:
+            run_torch_model(args.out, method, cases, args.torch_python, args.revision,
                     args.device, args.fast, args.overwrite,args.vbseg_variant)
+        except subprocess.CalledProcessError as exc:
+            crashed.add(method)
+            print(f"{method} stopped with exit code {exc.returncode} moving on", flush=True)
+    print("\nSegmentation summary:")
+    incomplete = False
+    for method in methods:
+        missing = [c["volume_id"] for c in cases if not label_path(args.out, method, c).exists()]
+        incomplete = incomplete or bool(missing) or method in crashed
+        note = f"; missing: {' '.join(missing)}" if missing else ""
+        print(f"  {method}: {len(cases) - len(missing)}/{len(cases)} cases in {segmentation_dir(args.out, method)}{note}")
+    if incomplete:
+        raise SystemExit("Some segmentations are missing or a method crashed; see the output above and segmentation_log.csv.")
 
 def cmd_biphasic(args):
     params = BiphasicParams(cortical_thickness_mm=args.thickness, grid_spacing_mm=args.grid_spacing, tet_optimizer=args.tet)
