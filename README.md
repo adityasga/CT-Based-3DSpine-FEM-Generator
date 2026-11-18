@@ -5,7 +5,7 @@
 ![Status: active development](https://img.shields.io/badge/status-active%20development-orange.svg)
 
 > **License, in short (see [`LICENSE`](LICENSE) for the full terms):** free to use for research and
-> academic work: please let the author know you're using it (a24mitha@uwaterloo.ca) and cite it
+> academic work: please let the author know you're using it (a42mitha@uwaterloo.ca) and cite it
 > ([`CITATION.cff`](CITATION.cff)) in anything you publish. **Commercial use is not permitted without
 > the author's prior written approval** : contact the same address first.
 
